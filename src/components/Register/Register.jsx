@@ -1,8 +1,9 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../../firebase.init";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const [success, setSuccess] = useState(false);
@@ -13,6 +14,7 @@ const Register = () => {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
+    const terms = event.target.terms.checked;
 
     // setDefault value
     setErrorMessage("");
@@ -29,11 +31,22 @@ const Register = () => {
       return setErrorMessage("Give strong password!");
     }
 
+    if(!terms){
+      return setErrorMessage("Please accept out terms and conditions.")
+     }
+
     // create user with email and password
     createUserWithEmailAndPassword(auth, email, password)
       .then((restlt) => {
         console.log(restlt.user);
         setSuccess(true);
+
+        // send verification email address
+        sendEmailVerification(auth.currentUser)
+        .then(()=> {
+          console.log('Verification email send.');
+        })
+
       })
       .catch((error) => {
         setErrorMessage(error.message);
@@ -90,6 +103,12 @@ const Register = () => {
             {showPassword ? <FaEye /> : <FaEyeSlash />}
           </button>
         </label>
+        <div className="form-control">
+          <label className="label justify-start gap-5 cursor-pointer">
+            <input type="checkbox" name="terms" className="checkbox" />
+            <span className="label-text">Accept our terms and condition?</span>
+          </label>
+        </div>
         <button className="btn btn-block">Submit</button>
       </form>
       {errorMessage && (
@@ -100,6 +119,9 @@ const Register = () => {
           Successfully created user!
         </p>
       )}
+      <p className="text-center my-5">
+        Already have an accout? Please <Link to={"/login"} className="text-green-600 font-bold">Login</Link>
+      </p>
     </div>
   );
 };
