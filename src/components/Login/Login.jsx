@@ -1,11 +1,14 @@
-import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { auth } from "../../firebase.init";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Login = () => {
   const [success, setSuccess] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [loginError, setLoginError] = useState("");
   const emailRef = useRef();
   const handelLogin = (e) => {
     e.preventDefault();
@@ -14,7 +17,7 @@ const Login = () => {
 
     // default value
     setSuccess(false);
-    setLoginError('');
+    setLoginError("");
 
     // login user
     signInWithEmailAndPassword(auth, email, password)
@@ -22,14 +25,11 @@ const Login = () => {
         console.log(result.user);
 
         if (!result.user.emailVerified) {
-         setLoginError('Please verify your email');
-        }
-        else{
-
+          setLoginError("Please verify your email");
+        } else {
           setSuccess(true);
         }
       })
-
 
       .catch((error) => {
         console.log(error.message);
@@ -37,21 +37,18 @@ const Login = () => {
       });
   };
 
-  const handelForgetPassword = () =>{
-    console.log('object' , emailRef.current.value);
+  const handelForgetPassword = () => {
+    console.log("object", emailRef.current.value);
     const email = emailRef.current.value;
 
-    if(!email){
-      console.log('Please provide a valid email.');
+    if (!email) {
+      console.log("Please provide a valid email.");
+    } else {
+      sendPasswordResetEmail(auth, email).then(() => {
+        alert("Reset email sent, please check you email address.");
+      });
     }
-    else{
-      sendPasswordResetEmail(auth, email)
-      .then(()=>{
-        alert('Reset email sent, please check you email address.')
-      })
-    }
-
-  }
+  };
   return (
     <div>
       <h3 className="text-3xl text-center my-5">Login</h3>
@@ -64,7 +61,7 @@ const Login = () => {
             <span className="label-text">Email</span>
           </label>
           <input
-          ref={emailRef}
+            ref={emailRef}
             type="email"
             name="email"
             placeholder="email"

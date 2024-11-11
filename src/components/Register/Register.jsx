@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase.init";
 import { useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -14,7 +14,11 @@ const Register = () => {
     event.preventDefault();
     const email = event.target.email.value;
     const password = event.target.password.value;
+    const name = event.target.name.value;
+    const photo = event.target.photo.value;
     const terms = event.target.terms.checked;
+
+    console.log(email, password, name, photo, terms);
 
     // setDefault value
     setErrorMessage("");
@@ -45,6 +49,19 @@ const Register = () => {
         sendEmailVerification(auth.currentUser)
         .then(()=> {
           console.log('Verification email send.');
+        });
+
+        // update profile name and profile
+        const profile = {
+          displayName:name,
+          photoURL:photo,
+        }
+        updateProfile(auth.currentUser, profile)
+        .then(()=>{
+          console.log('User profile updated.');
+        })
+        .catch((error)=> {
+          console.log('Profile updated error.');
         })
 
       })
@@ -60,6 +77,40 @@ const Register = () => {
         onSubmit={handelRegister}
         className="flex flex-col gap-5 max-w-2xl mx-auto border py-12 px-7 border-gray-700 rounded-lg shadow-xl"
       >
+        <label className="input input-bordered flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            className="h-4 w-4 opacity-70"
+          >
+            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+          </svg>
+          <input
+            type="text"
+            name="name"
+            className="grow"
+            placeholder="Name"
+          />
+        </label>
+        <label className="input input-bordered flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            className="h-4 w-4 opacity-70"
+          >
+            <path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" />
+            <path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" />
+          </svg>
+          <input
+            type="text"
+            name="photo"
+            className="grow"
+            placeholder="Photo url"
+          />
+        </label>
         <label className="input input-bordered flex items-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
